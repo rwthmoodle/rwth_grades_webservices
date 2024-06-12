@@ -40,6 +40,16 @@ function local_rwth_grades_webservices_override_webservice_execution($function, 
             }
         }
         return $result;
+    } else if ($function->name === 'core_grades_get_gradeitems') {
+        $result = call_user_func_array([$function->classname, $function->methodname], $params);
+        if (!array_key_exists('gradeItems', $result)) {
+            return $result;
+        }
+        foreach ($result['gradeItems'] as &$gradeitem) {
+            // Clean gradeitem name to conform to PARAM_CLEANHTML type.
+            $gradeitem->itemname = clean_param($gradeitem->itemname, PARAM_CLEANHTML);
+        }
+        return $result;
     }
     return false;
 }
